@@ -15,8 +15,6 @@ export default function App() {
   return (
     <NavigationContainer>
       <Stack.Navigator>
-          <Stack.Screen name="DriverHomeScreen" component={DriverHomeScreen} options={{ headerShown: false }} />
-       
          <Stack.Screen name="IntroPage" component={IntroPage} options={{ headerShown: false }} />
         <Stack.Screen name="driverLoginScreen" component={DriverLoginScreen} options={{ headerShown: false }} />
         <Stack.Screen name="driverSignUpScreen" component={DriverSignUpScreen} options={{ headerShown: false }} />
@@ -24,6 +22,8 @@ export default function App() {
         <Stack.Screen name="CustomerSignUpScreen" component={CustomerSignUpScreen} options={{ headerShown: false }} />
         <Stack.Screen name="CustomerHomeScreen" component={CustomerHomeScreen} options={{ headerShown: false }} />
              <Stack.Screen name="RouteSelectionScreen" component={RouteSelectionScreen} options={{ headerShown: false }} />
+          <Stack.Screen name="DriverHomeScreen" component={DriverHomeScreen} options={{ headerShown: false }} />
+       
     
      
       </Stack.Navigator>

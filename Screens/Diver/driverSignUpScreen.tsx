@@ -58,7 +58,7 @@ export default function DriverSignUpScreen() {
     setLoading(true);
 
     try {
-      const response = await fetch('http://192.168.1.3:3000/api/drivers/register', {
+      const response = await fetch('http://192.168.1.27:3000/api/drivers/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -79,25 +79,44 @@ export default function DriverSignUpScreen() {
         Alert.alert('Error', data.message || 'Something went wrong');
       }
     } catch (error) {
-      Alert.alert('Error', 'Failed to connect to server');
+      Alert.alert('Error', 'Failed to connect to server' + error.message);
     } finally {
       setLoading(false);
     }
   };
 
-  const handleOtpSubmit = () => {
-    if (otpCode.length !== 6) {
-      Alert.alert('Error', 'Please enter a valid 6-digit code');
-      return;
+ const handleOtpSubmit = async () => {
+  if (otpCode.length !== 6) {
+    Alert.alert('Error', 'Please enter a valid 6-digit code');
+    return;
+  }
+
+  setLoading(true);
+
+  try {
+    const response = await fetch('http://192.168.1.27:3000/api/drivers/verify-otp', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        email: email, // Using the email from form state
+        code: otpCode,
+      }),
+    });
+
+    const data = await response.json();
+
+    if (response.ok) {
+      Alert.alert('Success', 'Account verified successfully!');
+      navigation.navigate('DriverHomeScreen');
+    } else {
+      Alert.alert('Error', data.message || 'OTP verification failed');
     }
-
-    Alert.alert('OTP Verified', 'Welcome!');
-    setOtpVisible(false);
-    navigation.navigate('DriverHomeScreen');
-
-    // Optionally: navigate or continue further logic
-    // navigation.navigate('DriverHomeScreen');
-  };
+  } catch (error) {
+    Alert.alert('Error', 'Failed to verify OTP: ' + error.message);
+  } finally {
+    setLoading(false);
+  }
+};
 
   return (
     <View style={styles.container}>
