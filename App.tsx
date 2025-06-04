@@ -14,7 +14,7 @@ const Stack = createStackNavigator();
 export default function App() {
   return (
     <NavigationContainer>
-      <Stack.Navigator>
+      <Stack.Navigator  initialRouteName="IntroPage">
          <Stack.Screen name="IntroPage" component={IntroPage} options={{ headerShown: false }} />
         <Stack.Screen name="driverLoginScreen" component={DriverLoginScreen} options={{ headerShown: false }} />
         <Stack.Screen name="driverSignUpScreen" component={DriverSignUpScreen} options={{ headerShown: false }} />

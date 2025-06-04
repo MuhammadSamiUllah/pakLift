@@ -10,6 +10,8 @@ import {
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import Config from 'react-native-config';
+const apiUrl = Config.API_URL;
 
 export default function DriverLoginScreen() {
   const navigation = useNavigation();
@@ -18,44 +20,70 @@ export default function DriverLoginScreen() {
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
-  const handleLogin = async () => {
-    if (!email || !password) {
-      Alert.alert('Error', 'Please enter both email and password');
+const handleLogin = async () => {
+  if (!email || !password) {
+    Alert.alert('Error', 'Please enter both email and password');
+    return;
+  }
+
+  setLoading(true);
+
+  try {
+    // First check internet connectivity
+    const isConnected = await checkInternetConnection();
+    if (!isConnected) {
+      
+      Alert.alert('Error', 'No internet connection');
+      setLoading(false);
       return;
     }
 
-    setLoading(true);
+    const response = await fetch('http://172.17.241.75:3000/api/drivers/login', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        email,
+        password,
+      }),
+    //  timeout: 10000, // 10 second timeout
+    });
 
-    try {
-      const response = await fetch('http://10.0.2.2:3000/api/drivers/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          email,
-          password,
-        }),
-      });
-
-      const data = await response.json();
-
-      if (response.ok) {
-        // Successful login
-        Alert.alert('Success', 'Logged in successfully');
-        // Navigate to driver dashboard or home screen
-         navigation.navigate('DriverHomeScreen');
-      } else {
-        Alert.alert('Error', data.message || 'Login failed');
-      }
-    } catch (error) {
-      console.error('Login error:', error);
-      Alert.alert('Error', 'Failed to connect to server');
-    } finally {
-      setLoading(false);
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
     }
-  };
 
+    const data = await response.json();
+    console.log(response);
+    if (data.success || data.status === 'ok') {
+      navigation.navigate('DriverHomeScreen', { driverEmail: email.trim().toLowerCase() });
+    } else {
+      Alert.alert('Error', data.message || 'Login failed');
+    }
+  } catch (error) {
+    console.error('Login error:', error);
+    let errorMessage = 'Failed to connect to server';
+    if (error.message.includes('Network request failed')) {
+      errorMessage = 'Network error - please check your connection';
+    } else if (error.message.includes('timeout')) {
+      errorMessage = 'Request timeout - server is not responding';
+    }
+    Alert.alert('Error', errorMessage);
+  } finally {
+    setLoading(false);
+  }
+};
+
+// Add this helper function
+const checkInternetConnection = async () => {
+  try {
+    const response = await fetch('https://www.google.com', { method: 'HEAD' });
+    return response.ok;
+  } catch (error) {
+    return false;
+  }
+};
   return (
     <View style={styles.container}>
       <TouchableOpacity

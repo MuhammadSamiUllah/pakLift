@@ -14,8 +14,11 @@ import React, { useState } from 'react';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { launchImageLibrary } from 'react-native-image-picker';
 import { useNavigation } from '@react-navigation/native';
-
+import { useRoute } from '@react-navigation/native';
+import Config from 'react-native-config';
+const apiUrl = Config.API_URL;
 export default function DriverHomeScreen() {
+
   const navigation = useNavigation();
   const [busImage, setBusImage] = useState(null);
   const [licenseNo, setLicenseNo] = useState('');
@@ -28,7 +31,9 @@ export default function DriverHomeScreen() {
     numberOfSeats: false,
     numberPlate: false,
   });
-
+ // const route = useRoute();
+  const { driverEmail } = "samiullahmuhammad62@gmail.com";//  const { driverEmail } = route.params;
+// Alert.alert("Driver email:", driverEmail);
   const selectImage = () => {
     const options = {
       mediaType: 'photo',
@@ -64,48 +69,50 @@ export default function DriverHomeScreen() {
     return !Object.values(newErrors).some(Boolean);
   };
 
-  const handleSubmit = async () => {
-    if (!validateForm()) {
-      Alert.alert('Error', 'Please fill all fields correctly');
-      return;
+const handleSubmit = async () => {
+  if (!validateForm()) {
+    Alert.alert('Error', 'Please fill all fields correctly');
+    return;
+  }
+
+  setLoading(true);
+
+  try {
+    const formData = new FormData();
+    formData.append('driverEmail', driverEmail);  // Just sending driverEmail, no verification here
+    formData.append('licenseNo', licenseNo);
+    formData.append('numberOfSeats', numberOfSeats);
+    formData.append('numberPlate', numberPlate);
+    formData.append('busImage', {
+      uri: busImage.uri,
+      name: busImage.name,
+      type: busImage.type,
+    });
+
+    const response = await fetch(`http://172.17.241.75:3000/api/drivers/vehicle-details`, {
+      method: 'POST',
+      body: formData,
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+
+    const result = await response.json();
+
+    if (!response.ok) {
+      throw new Error(result.message || 'Failed to submit details');
     }
 
-    setLoading(true);
+    Alert.alert('Success', 'Vehicle details submitted successfully!');
+    navigation.navigate('RouteSelectionScreen', { driverEmail: driverEmail });
+  } catch (error) {
+    console.error('Submission error:', error);
+    Alert.alert('Error', error.message || 'Failed to connect to server');
+  } finally {
+    setLoading(false);
+  }
+};
 
-    try {
-      const formData = new FormData();
-      formData.append('licenseNo', licenseNo);
-      formData.append('numberOfSeats', numberOfSeats);
-      formData.append('numberPlate', numberPlate);
-      formData.append('busImage', {
-        uri: busImage.uri,
-        name: busImage.name,
-        type: busImage.type,
-      });
-
-      const response = await fetch('http://192.168.1.27:3000/api/drivers/vehicle-details', {
-        method: 'POST',
-        body: formData,
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      });
-
-      const result = await response.json();
-
-      if (!response.ok) {
-        throw new Error(result.message || 'Failed to submit details');
-      }
-
-      Alert.alert('Success', 'Vehicle details submitted successfully!');
-      navigation.navigate('RouteSelectionScreen');
-    } catch (error) {
-      console.error('Submission error:', error);
-      Alert.alert('Error', error.message || 'Failed to connect to server');
-    } finally {
-      setLoading(false);
-    }
-  };
 
   return (
     <SafeAreaView style={styles.safeArea}>

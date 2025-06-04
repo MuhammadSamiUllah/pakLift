@@ -17,11 +17,11 @@
       android:roundIcon="@mipmap/ic_launcher_round"
       android:allowBackup="false"
       android:theme="@style/AppTheme"
-      android:supportsRtl="true">
+      android:supportsRtl="true">//meri key  AIzaSyCtqxNUGz5TU0qpOmQRoJLWC5sC0-q6GVw
      
   <meta-data
     android:name="com.google.android.geo.API_KEY"
-    android:value="AIzaSyCtqxNUGz5TU0qpOmQRoJLWC5sC0-q6GVw" /> //  AIzaSyDqUaNajVsqp4Ef758UYCQdO5-mp4vw1eA
+    android:value="AIzaSyBT99TZreg7qNR4xmoRvGW6Tl7OIj2KSHw" /> //  AIzaSyDqUaNajVsqp4Ef758UYCQdO5-mp4vw1eA
       <activity
         android:name=".MainActivity"
         android:label="@string/app_name"

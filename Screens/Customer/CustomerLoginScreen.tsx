@@ -10,6 +10,8 @@ import {
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import Config from 'react-native-config';
+const apiUrl = Config.API_URL;
 
 export default function CustomerLoginScreen() {
   const navigation = useNavigation();
@@ -27,7 +29,7 @@ export default function CustomerLoginScreen() {
     setLoading(true);
 
     try {
-      const response = await fetch('http://10.0.2.2:3000/api/customers/login', {
+      const response = await fetch(`http://172.17.241.75:3000/api/customers/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -42,7 +44,7 @@ export default function CustomerLoginScreen() {
 
       if (response.ok) {
         Alert.alert('Success', 'Logged in successfully');
-        navigation.navigate('CustomerHomeScreen'); // Make sure this screen exists in your navigator
+        navigation.navigate('CustomerHomeScreen'); 
       } else {
         Alert.alert('Error', data.message || 'Login failed');
       }

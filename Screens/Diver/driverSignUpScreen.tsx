@@ -13,6 +13,8 @@ import { useNavigation } from '@react-navigation/native';
 import React, { useState } from 'react';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
+import Config from 'react-native-config';
+const apiUrl = Config.API_URL;
 export default function DriverSignUpScreen() {
   const navigation = useNavigation();
   const [driverName, setDriverName] = useState('');
@@ -58,7 +60,7 @@ export default function DriverSignUpScreen() {
     setLoading(true);
 
     try {
-      const response = await fetch('http://192.168.1.27:3000/api/drivers/register', {
+      const response = await fetch(`http://172.17.241.75:3000/api/drivers/register`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -92,9 +94,9 @@ export default function DriverSignUpScreen() {
   }
 
   setLoading(true);
-
+ 
   try {
-    const response = await fetch('http://192.168.1.27:3000/api/drivers/verify-otp', {
+    const response = await fetch(`http://172.17.241.75:3000/api/drivers/verify-otp`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({

@@ -1,3 +1,5 @@
+
+
 import React, { useState } from 'react';
 import {
   View,
@@ -12,6 +14,8 @@ import {
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import Config from 'react-native-config';
+const apiUrl = Config.API_URL;
 
 const CustomerSignUpScreen = () => {
   const navigation = useNavigation();
@@ -99,7 +103,7 @@ const CustomerSignUpScreen = () => {
     setLoading(true);
 
     try {
-      const response = await fetch('http://192.168.1.3:3000/api/customers/register', {
+      const response = await fetch(`http://172.17.241.75:3000/api/customers/register`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -467,4 +471,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default CustomerSignUpScreen;
+export default CustomerSignUpScreen; 
